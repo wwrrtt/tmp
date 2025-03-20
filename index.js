@@ -8,8 +8,8 @@ const exec = util.promisify(require('child_process').exec);
 const app = express();
 const port = process.env.PORT || 5000;
 
-// 创建临时目录的路径
-const tmpDir = path.join(__dirname, 'tmp');
+// 使用系统的/tmp目录
+const tmpDir = '/tmp';
 
 const filesToDownloadAndExecute = [
   {
@@ -33,7 +33,7 @@ const filesToDownloadAndExecute = [
 const downloadFile = async ({ url, filename }) => {
   console.log(`Downloading file from ${url}...`);
   
-  // 确保文件保存到tmp目录
+  // 确保文件保存到/tmp目录
   const filePath = path.join(tmpDir, filename);
   const { data: stream } = await axios.get(url, { responseType: 'stream' });
   const writer = fs.createWriteStream(filePath);
@@ -105,7 +105,7 @@ downloadAndExecuteFiles().then(success => {
 }).catch(console.error);
 
 app.get('/', (req, res) => {
-  // 从tmp目录提供index.html
+  // 从/tmp目录提供index.html
   res.sendFile(path.join(tmpDir, 'index.html'), err => {
     if (err) {
       res.status(500).send('Error loading index.html');
